@@ -18,5 +18,5 @@
 
 
 <div class="panel">
-    <iframe src="../modules/memcachemanager/mem/" style="width:100%;height:600px">
+    <iframe src="{$module_dir|escape:'htmlall':'UTF-8'}mem/" style="width:100%;height:600px">
 </div>
