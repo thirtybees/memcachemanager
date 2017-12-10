@@ -1,0 +1,1 @@
+The MemCache manager allows you to manager your servers Memcache from your back office. Memcache is a database cache that caches user data to memory speeding up browsing and site transactions.
