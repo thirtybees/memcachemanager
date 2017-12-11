@@ -6,6 +6,7 @@ tags:
   - memcache
   - cache
   - performance
+  - memcached
 description_short: The MemCache mananger allows you to manager your Memcache from your back office.
 description: description.md
 images:
