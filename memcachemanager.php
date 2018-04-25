@@ -17,71 +17,43 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-
-if (!defined('_TB_VERSION_'))
-
+if (!defined('_TB_VERSION_')) {
     exit;
+}
 
-
+/**
+ * Class Memcachemanager
+ */
 class Memcachemanager extends Module
-
 {
-
-    protected $config_form = false;
-
-
+    /**
+     * Memcachemanager constructor.
+     *
+     * @throws PrestaShopException
+     */
     public function __construct()
-
     {
-
         $this->name = 'memcachemanager';
-
         $this->tab = 'administration';
-
-        $this->version = '1.0.2';
-
+        $this->version = '1.0.3';
         $this->author = 'thirty bees';
-
-
         $this->bootstrap = true;
-
-
         parent::__construct();
-
-
         $this->displayName = $this->l('thirty bees Memcache Manager');
-
         $this->description = $this->l('View and manage your Memcache directly from your back office');
-
-
     }
 
-
-    public function install()
-
-    {
-
-        return parent::install() &&
-
-
-            (bool)true;
-
-    }
-
-
+    /**
+     * @return string
+     * @throws PrestaShopException
+     * @throws SmartyException
+     */
     public function getContent()
-
     {
-
-        $this->context->smarty->assign(array(
-
-            'module_dir' => $this->_path
-
-        ));
-
+        $this->context->smarty->assign([
+            'module_dir' => $this->_path,
+        ]);
 
         return $this->display(__FILE__, 'views/templates/admin/mem.tpl');
-
-
     }
 }

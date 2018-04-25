@@ -18,8 +18,13 @@
  * Configuration
  *
  * @author c.mahieux@of2m.fr
- * @since 06/04/2010
+ * @since  06/04/2010
  */
+
+if (!defined('_TB_VERSION_')) {
+    exit;
+}
+
 # Headers
 header('Content-type: text/html;');
 header('Cache-Control: no-cache, must-revalidate');
@@ -38,8 +43,7 @@ $request = (isset($_GET['request_write'])) ? $_GET['request_write'] : null;
 $write = null;
 
 # Display by request rype
-switch($request)
-{
+switch ($request) {
     # Unlock configuration file & temp directory
     case 'unlock':
         # chmod 0755
@@ -47,7 +51,7 @@ switch($request)
         chmod($_ini->get('file_path'), 0755);
         break;
 
-        # Live stats configuration save
+    # Live stats configuration save
     case 'live_stats':
         # Updating configuration
         $_ini->set('refresh_rate', round(max(2, $_POST['refresh_rate'])));
@@ -75,21 +79,18 @@ switch($request)
         $write = Library_Configuration_Loader::singleton()->write();
         break;
 
-        # Server configuration save
+    # Server configuration save
     case 'servers':
-        $array = array();
-        foreach($_POST['server'] as $cluster => $servers)
-        {
-            foreach($servers as $data)
-            {
-                $array[$_POST['cluster'][$cluster]][$data['hostname'] . ':' . $data['port']] = $data;
+        $array = [];
+        foreach ($_POST['server'] as $cluster => $servers) {
+            foreach ($servers as $data) {
+                $array[$_POST['cluster'][$cluster]][$data['hostname'].':'.$data['port']] = $data;
             }
         }
 
         # Sorting clusters
         ksort($array);
-        foreach($array as $cluster => $servers)
-        {
+        foreach ($array as $cluster => $servers) {
             # Sorting servers
             ksort($servers);
             $array[$cluster] = $servers;
@@ -102,7 +103,7 @@ switch($request)
         $write = Library_Configuration_Loader::singleton()->write();
         break;
 
-        # Miscellaneous configuration save
+    # Miscellaneous configuration save
     case 'miscellaneous':
         # Updating configuration
         $_ini->set('connection_timeout', $_POST['connection_timeout']);
@@ -112,7 +113,7 @@ switch($request)
         $write = Library_Configuration_Loader::singleton()->write();
         break;
 
-        # Default : No command
+    # Default : No command
     default :
         break;
 }

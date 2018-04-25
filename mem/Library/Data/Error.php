@@ -18,11 +18,19 @@
  * Error container
  *
  * @author elijaa@free.fr
- * @since 11/10/2010
+ * @since  11/10/2010
+ */
+
+if (!defined('_TB_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class Library_Data_Error
  */
 class Library_Data_Error
 {
-    private static $_errors = array();
+    private static $_errors = [];
 
     /**
      * Add an error to the container

@@ -18,7 +18,15 @@
  * Sending command to memcache server via PECL memcache API http://pecl.php.net/package/memcache
  *
  * @author c.mahieux@of2m.fr
- * @since 20/03/2010
+ * @since  20/03/2010
+ */
+
+if (!defined('_TB_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class Library_Command_Memcached
  */
 class Library_Command_Memcached implements Library_Command_Interface
 {
@@ -45,8 +53,8 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Send stats command to server
      * Return the result if successful or false otherwise
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
+     * @param String  $server Hostname
+     * @param Integer $port   Hostname Port
      *
      * @return Array|Boolean
      */
@@ -56,8 +64,7 @@ class Library_Command_Memcached implements Library_Command_Interface
         self::$_memcache->addServer($server, $port);
 
         # Executing command
-        if(($return = self::$_memcache->getStats()))
-        {
+        if (($return = self::$_memcache->getStats())) {
             # Delete server key based
             $stats = $return[$server.':'.$port];
 
@@ -74,6 +81,7 @@ class Library_Command_Memcached implements Library_Command_Interface
 
             return $stats;
         }
+
         return false;
     }
 
@@ -81,8 +89,8 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Send stats settings command to server
      * Return the result if successful or false otherwise
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
+     * @param String  $server Hostname
+     * @param Integer $port   Hostname Port
      *
      * @return Array|Boolean
      */
@@ -95,8 +103,8 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Send stats items command to server to retrieve slabs stats
      * Return the result if successful or false otherwise
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
+     * @param String  $server Hostname
+     * @param Integer $port   Hostname Port
      *
      * @return Array|Boolean
      */
@@ -109,9 +117,9 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Send stats cachedump command to server to retrieve slabs items
      * Return the result if successful or false otherwise
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
-     * @param Interger $slab Slab ID
+     * @param String   $server Hostname
+     * @param Integer  $port   Hostname Port
+     * @param Interger $slab   Slab ID
      *
      * @return Array|Boolean
      */
@@ -124,9 +132,9 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Send get command to server to retrieve an item
      * Return the result
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
-     * @param String $key Key to retrieve
+     * @param String  $server Hostname
+     * @param Integer $port   Hostname Port
+     * @param String  $key    Key to retrieve
      *
      * @return String
      */
@@ -136,10 +144,10 @@ class Library_Command_Memcached implements Library_Command_Interface
         self::$_memcache->addServer($server, $port);
 
         # Executing command : get
-        if($item = self::$_memcache->get($key))
-        {
+        if ($item = self::$_memcache->get($key)) {
             return print_r($item, true);
         }
+
         return self::$_memcache->getResultMessage();
     }
 
@@ -147,10 +155,10 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Set an item
      * Return the result
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
-     * @param String $key Key to store
-     * @param Mixed $data Data to store
+     * @param String  $server   Hostname
+     * @param Integer $port     Hostname Port
+     * @param String  $key      Key to store
+     * @param Mixed   $data     Data to store
      * @param Integer $duration Duration
      *
      * @return String
@@ -161,10 +169,13 @@ class Library_Command_Memcached implements Library_Command_Interface
         self::$_memcache->addServer($server, $port);
 
         # Checking duration
-        if($duration == '') { $duration = 0; }
+        if ($duration == '') {
+            $duration = 0;
+        }
 
         # Executing command : set
         self::$_memcache->set($key, $data, $duration);
+
         return self::$_memcache->getResultMessage();
     }
 
@@ -172,9 +183,9 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Delete an item
      * Return the result
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
-     * @param String $key Key to delete
+     * @param String  $server Hostname
+     * @param Integer $port   Hostname Port
+     * @param String  $key    Key to delete
      *
      * @return String
      */
@@ -185,6 +196,7 @@ class Library_Command_Memcached implements Library_Command_Interface
 
         # Executing command : delete
         self::$_memcache->delete($key);
+
         return self::$_memcache->getResultMessage();
     }
 
@@ -192,10 +204,10 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Increment the key by value
      * Return the result
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
-     * @param String $key Key to increment
-     * @param Integer $value Value to increment
+     * @param String  $server Hostname
+     * @param Integer $port   Hostname Port
+     * @param String  $key    Key to increment
+     * @param Integer $value  Value to increment
      *
      * @return String
      */
@@ -205,10 +217,10 @@ class Library_Command_Memcached implements Library_Command_Interface
         self::$_memcache->addServer($server, $port);
 
         # Executing command : increment
-        if($result = self::$_memcache->increment($key, $value))
-        {
+        if ($result = self::$_memcache->increment($key, $value)) {
             return $result;
         }
+
         return self::$_memcache->getResultMessage();
     }
 
@@ -216,10 +228,10 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Decrement the key by value
      * Return the result
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
-     * @param String $key Key to decrement
-     * @param Integer $value Value to decrement
+     * @param String  $server Hostname
+     * @param Integer $port   Hostname Port
+     * @param String  $key    Key to decrement
+     * @param Integer $value  Value to decrement
      *
      * @return String
      */
@@ -229,10 +241,10 @@ class Library_Command_Memcached implements Library_Command_Interface
         self::$_memcache->addServer($server, $port);
 
         # Executing command : decrement
-        if($result = self::$_memcache->decrement($key, $value))
-        {
+        if ($result = self::$_memcache->decrement($key, $value)) {
             return $result;
         }
+
         return self::$_memcache->getResultMessage();
     }
 
@@ -240,9 +252,9 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Flush all items on a server
      * Return the result
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
-     * @param Integer $delay Delay before flushing server
+     * @param String  $server Hostname
+     * @param Integer $port   Hostname Port
+     * @param Integer $delay  Delay before flushing server
      *
      * @return String
      */
@@ -253,6 +265,7 @@ class Library_Command_Memcached implements Library_Command_Interface
 
         # Executing command : delete
         self::$_memcache->flush($delay);
+
         return self::$_memcache->getResultMessage();
     }
 
@@ -260,9 +273,9 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Search for item
      * Return all the items matching parameters if successful, false otherwise
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
-     * @param String $key Key to search
+     * @param String  $server Hostname
+     * @param Integer $port   Hostname Port
+     * @param String  $key    Key to search
      *
      * @return Array
      */
@@ -275,9 +288,9 @@ class Library_Command_Memcached implements Library_Command_Interface
      * Execute a telnet command on a server
      * Return the result
      *
-     * @param String $server Hostname
-     * @param Integer $port Hostname Port
-     * @param String $command Command to execute
+     * @param String  $server  Hostname
+     * @param Integer $port    Hostname Port
+     * @param String  $command Command to execute
      *
      * @return String
      */

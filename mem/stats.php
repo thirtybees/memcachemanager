@@ -18,8 +18,12 @@
  * Live Stats top style
  *
  * @author Cyrille Mahieux : elijaa(at)free.fr
- * @since 12/04/2010
+ * @since  12/04/2010
  */
+if (!defined('_TB_VERSION_')) {
+    exit;
+}
+
 # Headers
 header('Content-type: text/html;');
 header('Cache-Control: no-cache, must-revalidate');
@@ -37,13 +41,10 @@ $_ini = Library_Configuration_Loader::singleton();
 $request = (isset($_GET['request_command'])) ? $_GET['request_command'] : null;
 
 # Stat of a particular cluster
-if(isset($_GET['cluster']) && ($_GET['cluster'] != null))
-{
+if (isset($_GET['cluster']) && ($_GET['cluster'] != null)) {
     $cluster = $_GET['cluster'];
-}
-# Getting default cluster
-else
-{
+} # Getting default cluster
+else {
     $clusters = array_keys($_ini->get('servers'));
     $cluster = isset($clusters[0]) ? $clusters[0] : null;
     $_GET['cluster'] = $cluster;
@@ -53,53 +54,46 @@ else
 $hash = md5($_GET['cluster']);
 
 # Cookie @FIXME not a perfect method
-if(!isset($_COOKIE['live_stats_id' . $hash]))
-{
+if (!isset($_COOKIE['live_stats_id'.$hash])) {
     # Cleaning temporary directory
-    $files = glob($_ini->get('file_path') . '*', GLOB_NOSORT );
-    foreach($files as $path)
-    {
+    $files = glob($_ini->get('file_path').'*', GLOB_NOSORT);
+    foreach ($files as $path) {
         # Getting file last modification time
         $stats = @stat($path);
 
         # Deleting file older than 24 hours
-        if(isset($stats['mtime']) && ($stats['mtime'] < (time() - 60*60*24)))
-        {
+        if (isset($stats['mtime']) && ($stats['mtime'] < (time() - 60 * 60 * 24))) {
             @unlink($path);
         }
     }
 
     # Generating unique id
-    $live_stats_id = rand() . $hash;
+    $live_stats_id = rand().$hash;
 
     # Cookie
-    setcookie('live_stats_id' . $hash, $live_stats_id, time() + 60*60*24);
-}
-else
-{
+    setcookie('live_stats_id'.$hash, $live_stats_id, time() + 60 * 60 * 24);
+} else {
     # Backup from a previous request
-    $live_stats_id = $_COOKIE['live_stats_id' . $hash];
+    $live_stats_id = $_COOKIE['live_stats_id'.$hash];
 }
 
 # Live stats dump file
-$file_path = rtrim($_ini->get('file_path'), '/') . DIRECTORY_SEPARATOR . 'live_stats.' . $live_stats_id;
+$file_path = rtrim($_ini->get('file_path'), '/').DIRECTORY_SEPARATOR.'live_stats.'.$live_stats_id;
 
 # Display by request type
-switch($request)
-{
+switch ($request) {
     # Ajax ask : stats
     case 'live_stats':
         # Opening old stats dump
         $previous = @unserialize(file_get_contents($file_path));
 
         # Initializing variables
-        $actual = array();
-        $stats = array();
+        $actual = [];
+        $stats = [];
         $time = 0;
 
         # Requesting stats for each server
-        foreach($_ini->cluster($cluster) as $server_name => $server)
-        {
+        foreach ($_ini->cluster($cluster) as $server_name => $server) {
             # Start query time calculation
             $time = microtime(true);
 
@@ -111,8 +105,7 @@ switch($request)
         }
 
         # Analysing stats
-        foreach($_ini->cluster($cluster) as $server_name => $server)
-        {
+        foreach ($_ini->cluster($cluster) as $server_name => $server) {
             # Making an alias
             $server = $server_name;
 
@@ -121,11 +114,9 @@ switch($request)
         }
 
         # Making stats for each server
-        foreach($stats as $server => $array)
-        {
+        foreach ($stats as $server => $array) {
             # Analysing request
-            if((isset($stats[$server]['uptime'])) && ($stats[$server]['uptime'] > 0))
-            {
+            if ((isset($stats[$server]['uptime'])) && ($stats[$server]['uptime'] > 0)) {
                 # Computing stats
                 $stats[$server] = Library_Data_Analysis::stats($stats[$server]);
 
@@ -145,12 +136,11 @@ switch($request)
         include 'View/LiveStats/Stats.tpl';
         break;
 
-        # Default : No command
+    # Default : No command
     default :
         # Initializing : making stats dump
-        $stats = array();
-        foreach($_ini->cluster($cluster) as $server_name => $server)
-        {
+        $stats = [];
+        foreach ($_ini->cluster($cluster) as $server_name => $server) {
             $stats[$server_name] = Library_Command_Factory::instance('stats_api')->stats($server['hostname'], $server['port']);
         }
 

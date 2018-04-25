@@ -1,4 +1,8 @@
 <?php
+if (!defined('_TB_VERSION_')) {
+    exit;
+}
+
 return array (
   'stats_api' => 'Server',
   'slabs_api' => 'Server',

@@ -18,7 +18,15 @@
  * Version container
  *
  * @author cyrille.mahieux@free.fr
- * @since 24/08/2011
+ * @since  24/08/2011
+ */
+
+if (!defined('_TB_VERSION_')) {
+    exit;
+}
+
+/**
+ * Class Library_Data_Version
  */
 class Library_Data_Version
 {
@@ -43,19 +51,15 @@ class Library_Data_Version
         $_ini = Library_Configuration_Loader::singleton();
 
         # Version definition file path
-        $path = rtrim($_ini->get('file_path'), '/') . DIRECTORY_SEPARATOR . self::$_file;
+        $path = rtrim($_ini->get('file_path'), '/').DIRECTORY_SEPARATOR.self::$_file;
 
         # Checking if file was modified for less than 15 days ago
-        if((is_array($stats = @stat($path))) && (isset($stats['mtime'])) && ($stats['mtime'] > (time() - self::$_time)))
-        {
+        if ((is_array($stats = @stat($path))) && (isset($stats['mtime'])) && ($stats['mtime'] > (time() - self::$_time))) {
             # Opening file and checking for latest version
             return (version_compare(CURRENT_VERSION, file_get_contents($path)) == -1);
-        }
-        else
-        {
+        } else {
             # Getting last version from Google Code
-            if($latest = @file_get_contents(self::$_latest))
-            {
+            if ($latest = @file_get_contents(self::$_latest)) {
                 # Saving latest version in file
                 file_put_contents($path, $latest);
 
@@ -64,6 +68,7 @@ class Library_Data_Version
             } else {
                 # To avoid error spam
                 file_put_contents($path, 'Net unreachable');
+
                 return true;
             }
         }

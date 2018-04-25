@@ -4,11 +4,12 @@ include_once('../../../init.php');
 
 
 $context = Context::getContext();
-$cookie = new Cookie('psAdmin', '', (int)Configuration::get('PS_COOKIE_LIFETIME_BO'));
-$employee = new Employee((int)$cookie->id_employee);
+$cookie = new Cookie('psAdmin', '', (int) Configuration::get('PS_COOKIE_LIFETIME_BO'));
+$employee = new Employee((int) $cookie->id_employee);
 
-if (!(Validate::isLoadedObject($employee) && $employee->checkPassword((int)$cookie->id_employee, $cookie->passwd) && (!isset($cookie->remote_addr) || $cookie->remote_addr == ip2long(Tools::getRemoteAddr()) || !Configuration::get('PS_COOKIE_CHECKIP'))))
-        die('User is not logged in');
+if (!(Validate::isLoadedObject($employee) && $employee->checkPassword((int) $cookie->id_employee, $cookie->passwd) && (!isset($cookie->remote_addr) || $cookie->remote_addr == ip2long(Tools::getRemoteAddr()) || !Configuration::get('PS_COOKIE_CHECKIP')))) {
+    die('User is not logged in');
+}
 /**
  * Copyright 2010 Cyrille Mahieux
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +29,7 @@ if (!(Validate::isLoadedObject($employee) && $employee->checkPassword((int)$cook
  * Stats viewing
  *
  * @author c.mahieux@of2m.fr
- * @since 20/03/2010
+ * @since  20/03/2010
  */
 # Headers
 header('Content-type: text/html; charset=UTF-8');
@@ -48,7 +49,6 @@ require_once 'Library/Data/Error.php';
 require_once 'Library/Data/Version.php';
 
 
-
 # Date timezone
 date_default_timezone_set('Europe/Paris');
 
@@ -59,8 +59,7 @@ $_ini = Library_Configuration_Loader::singleton();
 $request = (isset($_GET['show'])) ? $_GET['show'] : null;
 
 # Getting default cluster
-if(!isset($_GET['server']))
-{
+if (!isset($_GET['server'])) {
     $clusters = array_keys($_ini->get('servers'));
     $cluster = isset($clusters[0]) ? $clusters[0] : null;
     $_GET['server'] = $cluster;
@@ -70,26 +69,23 @@ if(!isset($_GET['server']))
 include 'View/Header.tpl';
 
 # Display by request type
-switch($request)
-{
+switch ($request) {
     # Items : Display of all items for a single slab for a single server
     case 'items':
         # Initializing items array
         $server = null;
         $items = false;
-        $response = array();
+        $response = [];
 
         # Ask for one server and one slabs items
-        if(isset($_GET['server']) && ($server = $_ini->server($_GET['server'])))
-        {
+        if (isset($_GET['server']) && ($server = $_ini->server($_GET['server']))) {
             $items = Library_Command_Factory::instance('items_api')->items($server['hostname'], $server['port'], $_GET['slab']);
         }
 
         # Cheking if asking an item
-        if(isset($_GET['request_key']))
-        {
+        if (isset($_GET['request_key'])) {
             $response[$server_name] = Library_HTML_Components::serverResponse($server['hostname'], $server['port'],
-                                                                              Library_Command_Factory::instance('get_api')->get($server['hostname'], $server['port'], $_GET['request_key']));
+                Library_Command_Factory::instance('get_api')->get($server['hostname'], $server['port'], $_GET['request_key']));
         }
 
         # Getting stats to calculate server boot time
@@ -97,83 +93,71 @@ switch($request)
         $infinite = (isset($stats['time'], $stats['uptime'])) ? ($stats['time'] - $stats['uptime']) : 0;
 
         # Items are well formed
-        if($items !== false)
-        {
+        if ($items !== false) {
             # Showing items
             include 'View/Stats/Items.tpl';
-        }
-        # Items are not well formed
-        else
-        {
+        } # Items are not well formed
+        else {
             include 'View/Stats/Error.tpl';
         }
         unset($items);
         break;
 
-        # Slabs : Display of all slabs for a single server
+    # Slabs : Display of all slabs for a single server
     case 'slabs':
         # Initializing slabs array
         $slabs = false;
 
         # Ask for one server slabs
-        if(isset($_GET['server']) && ($server = $_ini->server($_GET['server'])))
-        {
+        if (isset($_GET['server']) && ($server = $_ini->server($_GET['server']))) {
             # Spliting server in hostname:port
             $slabs = Library_Command_Factory::instance('slabs_api')->slabs($server['hostname'], $server['port']);
         }
 
         # Slabs are well formed
-        if($slabs !== false)
-        {
+        if ($slabs !== false) {
             # Analysis
             $slabs = Library_Data_Analysis::slabs($slabs);
             include 'View/Stats/Slabs.tpl';
-        }
-        # Slabs are not well formed
-        else
-        {
+        } # Slabs are not well formed
+        else {
             include 'View/Stats/Error.tpl';
         }
         unset($slabs);
         break;
 
-        # Default : Stats for all or specific single server
+    # Default : Stats for all or specific single server
     default :
         # Initializing stats & settings array
-        $stats = array();
-        $slabs = array();
+        $stats = [];
+        $slabs = [];
         $slabs['total_malloced'] = 0;
         $slabs['total_wasted'] = 0;
-        $settings = array();
-        $status = array();
+        $settings = [];
+        $status = [];
 
         $cluster = null;
         $server = null;
 
         # Ask for a particular cluster stats
-        if(isset($_GET['server']) && ($cluster = $_ini->cluster($_GET['server'])))
-        {
-            foreach($cluster as $server_name => $server)
-            {
+        if (isset($_GET['server']) && ($cluster = $_ini->cluster($_GET['server']))) {
+            foreach ($cluster as $server_name => $server) {
                 # Getting Stats & Slabs stats
-                $data = array();
+                $data = [];
                 $data['stats'] = Library_Command_Factory::instance('stats_api')->stats($server['hostname'], $server['port']);
                 $data['slabs'] = Library_Data_Analysis::slabs(Library_Command_Factory::instance('slabs_api')->slabs($server['hostname'], $server['port']));
                 $stats = Library_Data_Analysis::merge($stats, $data['stats']);
 
                 # Computing stats
-                if(isset($data['slabs']['total_malloced'], $data['slabs']['total_wasted']))
-                {
-	                $slabs['total_malloced'] += $data['slabs']['total_malloced'];
-	                $slabs['total_wasted'] += $data['slabs']['total_wasted'];
+                if (isset($data['slabs']['total_malloced'], $data['slabs']['total_wasted'])) {
+                    $slabs['total_malloced'] += $data['slabs']['total_malloced'];
+                    $slabs['total_wasted'] += $data['slabs']['total_wasted'];
                 }
-                $status[$server_name] = ($data['stats'] != array()) ? $data['stats']['version'] : '';
-                $uptime[$server_name] = ($data['stats'] != array()) ? $data['stats']['uptime'] : '';
+                $status[$server_name] = ($data['stats'] != []) ? $data['stats']['version'] : '';
+                $uptime[$server_name] = ($data['stats'] != []) ? $data['stats']['uptime'] : '';
             }
-        }
-        # Asking for a server stats
-        elseif(isset($_GET['server']) && ($server = $_ini->server($_GET['server'])))
-        {
+        } # Asking for a server stats
+        elseif (isset($_GET['server']) && ($server = $_ini->server($_GET['server']))) {
             # Getting Stats & Slabs stats
             $stats = Library_Command_Factory::instance('stats_api')->stats($server['hostname'], $server['port']);
             $slabs = Library_Data_Analysis::slabs(Library_Command_Factory::instance('slabs_api')->slabs($server['hostname'], $server['port']));
@@ -181,15 +165,12 @@ switch($request)
         }
 
         # Stats are well formed
-        if(($stats !== false) && ($stats != array()))
-        {
+        if (($stats !== false) && ($stats != [])) {
             # Analysis
             $stats = Library_Data_Analysis::stats($stats);
             include 'View/Stats/Stats.tpl';
-        }
-        # Stats are not well formed
-        else
-        {
+        } # Stats are not well formed
+        else {
             include 'View/Stats/Error.tpl';
         }
         unset($stats);
