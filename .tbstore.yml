@@ -3,17 +3,19 @@ compatible_versions: 1.0.0+
 author: thirty bees
 category: administration
 tags:
-  - memcache
-  - cache
-  - performance
+- memcache
+- cache
+- performance
+- memcached
+- memcachemanager
 description_short: The MemCache mananger allows you to manager your Memcache from your back office.
 description: description.md
 images:
-  - image-1.png
+- image-1.png
 license: AFL
 php_version:
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-  - 7.1
+- 5.4
+- 5.5
+- 5.6
+- 7.0
+- 7.1
