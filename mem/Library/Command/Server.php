@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,7 +48,7 @@ class Library_Command_Server implements Library_Command_Interface
 
     /**
      * Executing a Command on a MemCache Server
-     * With the help of http://github.com/memcached/memcached/blob/master/doc/protocol.txt
+     * With the help of https://github.com/memcached/memcached/blob/master/doc/protocol.txt
      * Return the response, or false otherwise
      *
      * @param String  $command Command
