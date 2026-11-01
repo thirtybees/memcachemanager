@@ -51,15 +51,15 @@ class Library_HTML_Components
 
         foreach ($_ini->get('servers') as $cluster => $servers) {
             # Cluster
-            $serverList .= '<option value="'.$cluster.'" ';
+            $serverList .= '<option value="'.htmlspecialchars($cluster, ENT_QUOTES, 'UTF-8').'" ';
             $serverList .= ($selected == $cluster) ? 'selected="selected"' : '';
-            $serverList .= '>'.$cluster.' cluster</option>';
+            $serverList .= '>'.htmlspecialchars($cluster, ENT_QUOTES, 'UTF-8').' cluster</option>';
 
             # Cluster server
             foreach ($servers as $server_name => $servers) {
-                $serverList .= '<option value="'.$server_name.'" ';
+                $serverList .= '<option value="'.htmlspecialchars($server_name, ENT_QUOTES, 'UTF-8').'" ';
                 $serverList .= ($selected == $server_name) ? 'selected="selected"' : '';
-                $serverList .= '>&nbsp;&nbsp;-&nbsp;'.$server_name.'</option>';
+                $serverList .= '>&nbsp;&nbsp;-&nbsp;'.htmlspecialchars($server_name, ENT_QUOTES, 'UTF-8').'</option>';
             }
         }
 
@@ -87,9 +87,9 @@ class Library_HTML_Components
 
         foreach ($_ini->get('servers') as $cluster => $servers) {
             # Option value and selected case
-            $clusterList .= '<option value="'.$cluster.'" ';
+            $clusterList .= '<option value="'.htmlspecialchars($cluster, ENT_QUOTES, 'UTF-8').'" ';
             $clusterList .= ($selected == $cluster) ? 'selected="selected"' : '';
-            $clusterList .= '>'.$cluster.' cluster</option>';
+            $clusterList .= '>'.htmlspecialchars($cluster, ENT_QUOTES, 'UTF-8').' cluster</option>';
         }
 
         return $clusterList.'</select>';

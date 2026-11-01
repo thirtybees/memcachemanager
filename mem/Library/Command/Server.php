@@ -54,14 +54,23 @@ class Library_Command_Server implements Library_Command_Interface
      * @param String  $command Command
      * @param String  $server  Server Hostname
      * @param Integer $port    Server Port
+     * @param String  $data    (optionnal) Data block sent after the command line (set)
      *
      * @return String|Boolean
      */
-    public function exec($command, $server, $port)
+    public function exec($command, $server, $port, $data = null)
     {
         # Variables
         $buffer = '';
         $handle = null;
+
+        # A command is a single line, refusing anything that could inject a second command
+        if (!is_string($command) || (strpbrk($command, "\r\n\0") !== false)) {
+            self::$_log = 'CLIENT_ERROR invalid command';
+            Library_Data_Error::add('Invalid command refused');
+
+            return false;
+        }
 
         # Socket Opening
         if (!($handle = @fsockopen($server, $port, $errno, $errstr, self::$_ini->get('connection_timeout')))) {
@@ -73,7 +82,7 @@ class Library_Command_Server implements Library_Command_Interface
         }
 
         # Sending Command ...
-        fwrite($handle, $command."\r\n");
+        fwrite($handle, $command."\r\n".(($data !== null) ? $data."\r\n" : ''));
 
         # Getting first line
         $buffer = fgets($handle);
@@ -277,7 +286,7 @@ class Library_Command_Server implements Library_Command_Interface
         $items = false;
 
         # Executing command : stats cachedump
-        if (($result = $this->exec('stats cachedump '.$slab.' '.self::$_ini->get('max_item_dump'), $server, $port))) {
+        if (($result = $this->exec('stats cachedump '.(int) $slab.' '.(int) self::$_ini->get('max_item_dump'), $server, $port))) {
             # Parsing result
             $items = $this->parse($result, false);
         }
@@ -323,7 +332,7 @@ class Library_Command_Server implements Library_Command_Interface
         $data = preg_replace('/\r/', '', $data);
 
         # Executing command : set
-        if (($result = $this->exec('set '.$key.' 0 '.$duration.' '.strlen($data)."\r\n".$data, $server, $port))) {
+        if (($result = $this->exec('set '.$key.' 0 '.$duration.' '.strlen($data), $server, $port, $data))) {
             return $result;
         }
 

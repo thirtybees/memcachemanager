@@ -12,8 +12,7 @@ if (!defined('ENT_IGNORE')) {
 }
 
 # Autoloader
-function __autoload($class)
-{
-    require_once str_replace('_', DIRECTORY_SEPARATOR, $class).'.php';
-}
+spl_autoload_register(function ($class) {
+    require_once str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
+});
 

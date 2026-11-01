@@ -7,7 +7,7 @@ if((isset($stats)) && (($stats === false) || ($stats == array())))
         # Asking server of cluster stats
         if(isset($_GET['server']))
         {
-            echo ($_ini->cluster($_GET['server'])) ? 'All servers from Cluster ' . $_GET['server'] : 'Server '  . $_GET['server'], ' did not respond !';
+            echo ($_ini->cluster($_GET['server'])) ? 'All servers from Cluster ' . htmlspecialchars($_GET['server'], ENT_QUOTES, 'UTF-8') : 'Server '  . htmlspecialchars($_GET['server'], ENT_QUOTES, 'UTF-8'), ' did not respond !';
         }
         # All servers stats
         else
@@ -52,7 +52,7 @@ elseif((isset($items)) && ($items === false))
         This slab is allocated, but is empty
         <br/>
         <br/>
-        Go back to <a href="?server=<?php echo $_GET['server']; ?>&amp;show=slabs" class="green">Server Slabs</a>
+        Go back to <a href="?server=<?php echo isset($_GET['server']) ? htmlspecialchars(urlencode($_GET['server']), ENT_QUOTES, 'UTF-8') : ''; ?>&amp;show=slabs" class="green">Server Slabs</a>
     </div>
 <?php
 }

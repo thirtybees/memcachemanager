@@ -18,7 +18,7 @@
 
     <div class="size-2" style="float:left;padding-left:9px;margin-top:10px;">
         <div class="header corner padding size-3cols" style="text-align:center;">
-            <a href="?server=<?php echo $_GET['server']; ?>">See this Server Stats</a>
+            <a href="?server=<?php echo htmlspecialchars(urlencode($_GET['server']), ENT_QUOTES, 'UTF-8'); ?>">See this Server Stats</a>
         </div>
         <br/>
     </div>
@@ -52,8 +52,8 @@ foreach($slabs as $id => $slab)
         }
 ?>
         <td <?php if($actualSlab > 0) { echo 'style="padding-left:9px;"'; } ?> valign="top">
-            <div class="sub-header corner padding size-5">Slab <?php echo $id; ?> <span class="green">Stats</span>
-                <span style="float:right;"><a href="?server=<?php echo $_GET['server']; ?>&amp;show=items&amp;slab=<?php echo $id; ?>">See Slab Items</a></span>
+            <div class="sub-header corner padding size-5">Slab <?php echo htmlspecialchars($id, ENT_QUOTES, 'UTF-8'); ?> <span class="green">Stats</span>
+                <span style="float:right;"><a href="?server=<?php echo htmlspecialchars(urlencode($_GET['server']), ENT_QUOTES, 'UTF-8'); ?>&amp;show=items&amp;slab=<?php echo htmlspecialchars(urlencode($id), ENT_QUOTES, 'UTF-8'); ?>">See Slab Items</a></span>
             </div>
             <div class="container corner padding size-5">
                 <div class="line">

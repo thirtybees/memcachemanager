@@ -143,7 +143,7 @@
 if((isset($_GET['server'])) && ($_ini->server($_GET['server'])))
 { ?>
         <div class="header corner padding size-3cols" style="text-align:center;margin-top:10px;">
-            <a href="?server=<?php echo $_GET['server']; ?>&amp;show=slabs">See this Server Slabs Stats</a>
+            <a href="?server=<?php echo htmlspecialchars(urlencode($_GET['server']), ENT_QUOTES, 'UTF-8'); ?>&amp;show=slabs">See this Server Slabs Stats</a>
         </div>
 <?php
 } ?>
@@ -309,7 +309,7 @@ if((isset($_GET['server'])) && ($_ini->server($_GET['server'])))
 # Viewing a cluster
 elseif((isset($_GET['server'])) && ($cluster = $_ini->cluster($_GET['server'])))
 { ?>
-        <div class="sub-header corner padding">Cluster <?php echo $_GET['server']; ?> <span class="green">Servers List</span></div>
+        <div class="sub-header corner padding">Cluster <?php echo htmlspecialchars($_GET['server'], ENT_QUOTES, 'UTF-8'); ?> <span class="green">Servers List</span></div>
         <div class="container corner padding">
 <?php
     # Displaying first 8 servers
@@ -317,8 +317,8 @@ elseif((isset($_GET['server'])) && ($cluster = $_ini->cluster($_GET['server'])))
     foreach($cluster as $server_name => $server)
     { ?>
             <div class="line server" style="<?php if($displayed > 8) { echo 'display:none;'; } else { $displayed++; } ?>">
-                <span class="left setting"><?php echo $server_name; ?></span>
-                <span class="right" style="font-weight:bold;"><a href="index.php?server=<?php echo $server_name; ?>" class="green">See Server Stats</a></span>
+                <span class="left setting"><?php echo htmlspecialchars($server_name, ENT_QUOTES, 'UTF-8'); ?></span>
+                <span class="right" style="font-weight:bold;"><a href="index.php?server=<?php echo htmlspecialchars(urlencode($server_name), ENT_QUOTES, 'UTF-8'); ?>" class="green">See Server Stats</a></span>
                 <div class="line" style="margin-left:5px;">
                     <?php echo ($status[$server_name] != '') ? 'Version ' . $status[$server_name] . ', Uptime : ' . Library_Data_Analysis::uptime($uptime[$server_name]) : 'Server did not respond'; ?>
                 </div>

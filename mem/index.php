@@ -10,6 +10,16 @@ $employee = new Employee((int) $cookie->id_employee);
 if (!(Validate::isLoadedObject($employee) && $employee->checkPassword((int) $cookie->id_employee, $cookie->passwd) && (!isset($cookie->remote_addr) || $cookie->remote_addr == ip2long(Tools::getRemoteAddr()) || !Configuration::get('PS_COOKIE_CHECKIP')))) {
     die('User is not logged in');
 }
+
+# Only employees allowed to configure this module may use the memcache admin
+try {
+    $canConfigure = Module::getPermissionStatic(Module::getModuleIdByName('memcachemanager'), 'configure', $employee);
+} catch (Exception $e) {
+    $canConfigure = false;
+}
+if (!$canConfigure) {
+    die('User is not allowed to configure this module');
+}
 /**
  * Copyright 2010 Cyrille Mahieux
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,6 +75,11 @@ if (!isset($_GET['server'])) {
     $_GET['server'] = $cluster;
 }
 
+# Only accept a server or cluster from the configuration
+if (isset($_GET['server']) && (!is_string($_GET['server']) || (!$_ini->server($_GET['server']) && !$_ini->cluster($_GET['server'])))) {
+    unset($_GET['server']);
+}
+
 # Showing header
 include 'View/Header.tpl';
 
@@ -77,13 +92,18 @@ switch ($request) {
         $items = false;
         $response = [];
 
+        # Slab must be a slab id
+        if (!isset($_GET['slab']) || !is_string($_GET['slab']) || !ctype_digit($_GET['slab'])) {
+            $_GET['slab'] = '';
+        }
+
         # Ask for one server and one slabs items
-        if (isset($_GET['server']) && ($server = $_ini->server($_GET['server']))) {
+        if (isset($_GET['server']) && ($_GET['slab'] !== '') && ($server = $_ini->server($_GET['server']))) {
             $items = Library_Command_Factory::instance('items_api')->items($server['hostname'], $server['port'], $_GET['slab']);
         }
 
-        # Cheking if asking an item
-        if (isset($_GET['request_key'])) {
+        # Cheking if asking an item, a memcache key is at most 250 chars without whitespace or control chars
+        if ($server && isset($_GET['request_key']) && is_string($_GET['request_key']) && preg_match('/^[^\x00-\x20\x7f]{1,250}$/', $_GET['request_key'])) {
             $response[$server_name] = Library_HTML_Components::serverResponse($server['hostname'], $server['port'],
                 Library_Command_Factory::instance('get_api')->get($server['hostname'], $server['port'], $_GET['request_key']));
         }
