@@ -35,7 +35,7 @@ class Memcachemanager extends Module
     {
         $this->name = 'memcachemanager';
         $this->tab = 'administration';
-        $this->version = '1.0.3';
+        $this->version = '1.0.4';
         $this->author = 'thirty bees';
         $this->bootstrap = true;
         parent::__construct();
